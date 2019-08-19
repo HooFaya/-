@@ -4,13 +4,12 @@ from django.http import JsonResponse
 from step2_Query import Query
 import simplejson
 
-jobID = 0
-q = Query(jobID)
+q = None
 
 
 def get_rlt_of_query(request):
     global q
-    global jobID
+
     request.encoding = 'utf-8'
     if request.method != "POST":
         return JsonResponse({"status": 405, "message": "Only POST supported"}, safe=False)
@@ -32,7 +31,7 @@ def get_rlt_of_query(request):
         elif not content:
             return JsonResponse({"status": 400, "message": "Error:list cannot be none"}, safe=False)
         #有不同的任务就切换
-        if q.job_id != jobID:
+        if not q or q.job_id != jobID:
             q = Query(jobID)
         res = q.query(request.body)
 
